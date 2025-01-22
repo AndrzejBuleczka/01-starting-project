@@ -1,11 +1,11 @@
 <article>
-  <p>Task title</p>
+  <p>{{ task.title }}</p>
   <time>
-    Time
+    {{ task.dueDate }}
   </time>
-  <p>Summary</p>
-  <p class="action">
-    <button>Complete</button>
+  <p>{{ task.summary }}</p>
+  <p class="actions">
+    <button (click)="onCompleteTask()">Complete</button>
   </p>
 </article>
 
