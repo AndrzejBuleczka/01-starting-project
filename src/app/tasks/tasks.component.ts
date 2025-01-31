@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { TaskComponent } from "./task/task.component";
-import { dummyTasks } from "./../dummy-tasks";
 import { NewTaskComponent } from "./new-task/new-task.component";
 import { type NewTaskData } from './task/task.model';
+import { TasksService } from './tasks.service';
 
 @Component({
   selector: 'app-tasks',
@@ -14,26 +14,20 @@ import { type NewTaskData } from './task/task.model';
 export class TasksComponent {
   @Input({required: true}) userId!: string;
   @Input({required: true}) name!: string;
-  tasks = dummyTasks
   isAddingTask = false;
+  
+  constructor(private tasksService: TasksService) {}
 
   get selectedUserTasks() {
-    return this.tasks.filter(task => task.userId === this.userId);
+    return this.tasksService.getUserTasks(this.userId);
   }
 
   onCompleteTask(id: string) {
-    this.tasks = this.tasks.filter(task => task.id !== id);
+    this.tasksService.removeTask(id);
   }
 
   onStartAddTask() {
     this.isAddingTask = true;
-    // this.tasks.push({
-    //   id: Math.random().toString(),
-    //   userId: this.userId,
-    //   title: `Task ${this.tasks.length + 1}`,
-    //   summary: `Summary for task ${this.tasks.length + 1}`,
-    //   dueDate: new Date().toISOString(),
-    // });
   }
 
   onCancelAddTask() {
@@ -41,13 +35,7 @@ export class TasksComponent {
   }
 
   onAddTask(taskData: NewTaskData) {
-    this.tasks.push({
-      id: new Date().getTime().toString(),
-      userId: this.userId,
-      title: taskData.title,
-      summary: taskData.summary,
-      dueDate: taskData.date
-    })
+    this.tasksService.addTask(taskData, this.userId);
     this.isAddingTask = false;
   }
 
